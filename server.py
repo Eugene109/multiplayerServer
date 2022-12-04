@@ -3,7 +3,7 @@ from _thread import *
 import sys
 
 # server = "192.168.1.160"
-server = "192.168.1.251"
+server = "192.168.1.160"
 
 # server = "127.0.1.1"
 
@@ -27,14 +27,14 @@ def read_pos(str):
 def make_pos(tup):
     return str(tup[0]) + "," + str(tup[1])
 
-pos = [(50,75), (50,100), (50,125), (25,75), (25,100), (25,125)]
+pos = [(50,75), (50,100), (50,125), (25,75), (25,100), (1976 - 50,1464 - 100)]
 
 def threaded_client(conn, player_num):
     copVsPrisoner = 0
     if player_num == 5:
         copVsPrisoner = 1
     print(player_num)
-    conn.send(str.encode(make_pos(pos[player_num]) + "," + str(copVsPrisoner)))
+    conn.send(str.encode(make_pos(pos[player_num]) + "," + str(player_num)))
     print(pos[player_num])
     reply = ""
     while True:
@@ -49,17 +49,11 @@ def threaded_client(conn, player_num):
         else:
             # reply = make_pos(pos[player_num-1])
             reply = ""
-            for a in range(0,len(pos)-1):
-                if a > player_num:
-                    if reply == "":
-                        reply = make_pos(pos[a])
-                    else:
-                        reply = reply + "|" + make_pos(pos[a])
+            for a in range(0,len(pos)):
+                if reply == "":
+                    reply = make_pos(pos[a])
                 else:
-                    if reply == "":
-                        reply = make_pos(pos[a+1])
-                    else:
-                        reply = reply + "|" + make_pos(pos[a+1])
+                    reply = reply + "|" + make_pos(pos[a])
 
             # print("Received: " + data)
             # print("Sending : " + reply)

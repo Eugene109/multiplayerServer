@@ -12,8 +12,8 @@ class Network:
         # self.server = "192.168.1.160"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.pos = self.connect()
-        print(self.pos)
+        self.startArgs = self.connect()
+        print(self.startArgs)
 
     def connect(self):
         try:
@@ -64,7 +64,7 @@ class Background():
         win.blit(self.image, (-cameraShiftx, -cameraShifty))
 
 class Player():
-    def __init__(self, x, y):
+    def __init__(self, x, y, IsCopOrPrisoner): # False = prisoner true = cop
         self.x = x
         self.y = y
         self.rect = (x,y,width,height)
@@ -138,7 +138,7 @@ class Player():
 
 
 class OtherPlayer():
-    def __init__(self, x, y):
+    def __init__(self, x, y, IsCopOrPrisoner):
         self.x = x
         self.y = y
         self.rect = (x,y,width,height)
@@ -170,17 +170,30 @@ class OtherPlayer():
 def read_pos(str):
     str = str.split(",")
     return int(str[0]), int(str[1])
+def parse_args(str):
+    str = str.split(",")
+    return int(str[0]), int(str[1]), int(str[2])
 
 def main():
+    playerPositions = [(0,0), (0,0), (0,0), (0,0), (0,0),]
     clock = pygame.time.Clock()
     n = Network()
-    player = Player(read_pos(n.pos)[0], read_pos(n.pos)[1])
+    player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5))
+    playerIndex = parse_args(n.startArgs)[2]
+    otherPlayers = [OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0),]
     running = True
     bg = Background()
     while running:
         clock.tick(30)
         # n.send("hi")
         playerPositionsString = n.send(make_pos((player.x, player.y)))
+        playerPositionsStringsSeparated = playerPositionsString.split('|')
+        for a in range(0, len(playerPositions)):
+            playerPositions[a] = read_pos(playerPositionsStringsSeparated[a])
+            if not a == playerIndex:
+                otherPlayers[a].x = playerPositions[a][0]
+                otherPlayers[a].y = playerPositions[a][1]
+
         # print(n.connect())
 
         for event in pygame.event.get():
@@ -191,6 +204,9 @@ def main():
         bg.draw(win)
 
         player.move(win)
+        bg.draw(win)
+        for a in otherPlayers:
+            a.draw(win)
         player.draw(win)
         pygame.display.update()
 
