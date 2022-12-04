@@ -275,7 +275,7 @@ def main():
         pygame.display.update()
 
 net = Network()
-print("Waiting for at least 3 players ...")
+print("Waiting for at least 3 players...")
 print("Hint: you can join multiple times from the same computer")
 
 import time

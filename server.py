@@ -41,7 +41,7 @@ def threaded_client(conn, player_num, game_num):
     print(player_num)
     conn.send(str.encode(make_pos(pos[game_num][player_num]) + "," + str(player_num)))
     print(pos[game_num][player_num])
-    while currentPlayer < 3:
+    while currentPlayer%6 < 3:
         time.sleep(0.5)
     conn.send(str.encode("Game Start"))
 
