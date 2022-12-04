@@ -270,7 +270,8 @@ def main():
         player.draw(win)
 
         if caught:
-            caughtScreen.draw(win)
+            # caughtScreen.draw(win)
+            pass
 
         pygame.display.update()
 
