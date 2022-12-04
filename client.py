@@ -1,10 +1,14 @@
 import socket
 
+# from signal import signal, SIGPIPE, SIG_DFL
+
+# signal(SIGPIPE,SIG_DFL)
+
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # self.server = "72.73.24.66"
-        self.server = "127.0.1.1"
+        self.server = "72.73.24.66"
+        # self.server = "127.0.1.1"
         # self.server = "192.168.1.160"
         self.port = 5555
         self.addr = (self.server, self.port)
@@ -16,13 +20,12 @@ class Network:
             self.client.connect(self.addr)
             return self.client.recv(2048).decode()
         except: 
-            # print ('Something Went Wrong')
+            print ('Something Went Wrong')
             pass
 
     def send(self, data):
         try:
-            self.client.connect(self.addr)
-            self.client.send(str.encode(data))
+            self.client.sendall(str.encode(data))
             return self.client.recv(2048).decode()
         except socket.error as e:
             print(e)
@@ -176,6 +179,7 @@ def main():
     bg = Background()
     while running:
         clock.tick(30)
+        # n.send("hi")
         n.send(make_pos((player.x, player.y)))
         # print(n.connect())
 

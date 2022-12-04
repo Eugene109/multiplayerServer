@@ -2,9 +2,9 @@ import socket
 from _thread import *
 import sys
 
-# server = "192.168.1.160"
+server = "192.168.1.160"
 
-server = "127.0.1.1"
+# server = "127.0.1.1"
 
 port = 5555
 
@@ -15,11 +15,11 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(2)
+s.listen(3)
 print("Waiting for a connection, Server Started")
 
 def read_pos(str):
-    str = str.split(",")
+    str = str.split(',')
     return int(str[0]), int(str[1])
 
 
@@ -37,29 +37,35 @@ def threaded_client(conn, player_num):
     print(pos[player_num])
     reply = ""
     while True:
-        try:
-            data = conn.recv(2048)
-            pos[player_num] = read_pos(data)
+        # try:
+        data = conn.recv(2048).decode()
+        pos[player_num] = read_pos(data)
 
-            print(pos[player_num])
-            if not data:
-                print("Disconnected")
-                break
-            else:
-                # reply = make_pos(pos[player_num-1])
-                reply = ""
-                for a in range(0,len(pos)-1):
-                    if a > player_num:
-                        reply = reply + "," + pos[a]
-                    else:
-                        reply = reply + "," + pos[a+1]
-
-                print("Received: " + str.decode(data))
-                print("Sending : " + reply)
-
-            conn.sendall(str.encode(reply))
-        except:
+        print(pos[player_num])
+        if not data:
+            print("Disconnected")
             break
+        else:
+            # reply = make_pos(pos[player_num-1])
+            reply = ""
+            for a in range(0,len(pos)-1):
+                if a > player_num:
+                    if reply == "":
+                        reply = make_pos(pos[a])
+                    else:
+                        reply = reply + "," + make_pos(pos[a])
+                else:
+                    if reply == "":
+                        reply = make_pos(pos[a+1])
+                    else:
+                    reply = reply + "," + make_pos(pos[a+1])
+
+            print("Received: " + data)
+            print("Sending : " + reply)
+
+        conn.sendall(str.encode(reply))
+        # except:
+            # break
 
     print("Lost connection")
     conn.close()
