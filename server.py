@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import sys
 
-server = "192.168.1.160"
+server = "192.168.1.172"
 # server = "192.168.1.160"
 
 # server = "127.0.1.1"

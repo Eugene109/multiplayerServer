@@ -157,9 +157,7 @@ class Player():
     def check_cop_collision(self, CopPositions):
         global caught
         for a in range (0, 2):
-            if CopPositions[a][0] - self.x > -10 and CopPositions[a][0] - self.x < 30:
-                caught = True
-            if CopPositions[a][1] - self.y > -20 and CopPositions[a][1] - self.y < 60:
+            if CopPositions[a][0] - self.x > -10 and CopPositions[a][0] - self.x < 30 and CopPositions[a][1] - self.y > -20 and CopPositions[a][1] - self.y < 60:
                 caught = True
 
 
