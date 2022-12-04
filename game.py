@@ -58,10 +58,11 @@ cameraShifty = -150
 
 class Background():
     def __init__(self):
-        self.image = pygame.transform.scale(pygame.image.load('maze.png'), (247*8, 183*8))
+        self.image = pygame.transform.scale(pygame.image.load('maze.png'), (1926, 1464))
     def draw(self, win):
         global cameraShiftx
         global cameraShifty
+        # win.blit(self.image, (-cameraShiftx, -cameraShifty))
         win.blit(self.image, (-cameraShiftx, -cameraShifty))
 
 class Player():
@@ -192,30 +193,42 @@ def parse_args(str):
     return int(str[0]), int(str[1]), int(str[2])
 
 def main():
-    playerPositions = [(0,0), (0,0), (0,0), (0,0), (0,0),]
+    playerPositions = [(0,0), (0,0),(0,0), (0,0), (0,0), (0,0),]
     clock = pygame.time.Clock()
     n = Network()
-    player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5))
+    player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5 or parse_args(n.startArgs)[2] == 2))
     global cameraShiftx
     global cameraShifty
     cameraShiftx = -250 + player.x
     cameraShifty = -250 + player.y
     playerIndex = parse_args(n.startArgs)[2]
-    otherPlayers = [Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0),]
+    otherPlayers = [Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,1), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,1),]
+    del otherPlayers [playerIndex]
     running = True
     bg = Background()
     while running:
         clock.tick(30)
         # n.send("hi")
+        idk1 = cameraShiftx
+        idk2 = cameraShifty
+        cameraShifty = 0
+        cameraShiftx = 0
+        bg.draw(win)
+        cameraShiftx = idk1
+        cameraShifty = idk2
         playerPositionsString = n.send(make_pos((player.x, player.y)))
         playerPositionsStringsSeparated = playerPositionsString.split('|')
-        for a in range(0, len(playerPositions)):
-            playerPositions[a] = read_pos(playerPositionsStringsSeparated[a])
-            if a != playerIndex:
+        for a in range(0, len(playerPositions) - 1):
+            if a < playerIndex:
+                playerPositions[a] = read_pos(playerPositionsStringsSeparated[a])
                 otherPlayers[a].x = playerPositions[a][0]
                 otherPlayers[a].y = playerPositions[a][1]
+            else:
+                playerPositions[a+1] = read_pos(playerPositionsStringsSeparated[a+1])
+                otherPlayers[a].x = playerPositions[a+1][0]
+                otherPlayers[a].y = playerPositions[a+1][1]
 
-        # print(n.connect())
+        print(str(player.x) + ", " + str(player.y))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -31,7 +31,7 @@ pos = []
 
 def threaded_client(conn, player_num, game_num):
     copVsPrisoner = 0
-    if player_num == 5:
+    if player_num == 2 or player_num == 5:
         copVsPrisoner = 1
     print(player_num)
     conn.send(str.encode(make_pos(pos[game_num][player_num]) + "," + str(player_num)))
@@ -70,6 +70,6 @@ while True:
     print("Connected to:", addr)
 
     if currentPlayer % 6 == 0:
-        pos.append([(50,75), (50,100), (50,125), (25,125), (25,100), (1976 - 50,1464 - 100)])
+        pos.append([(50,75), (50,100), (1976 - 50, 1464 - 150), (25,125), (25,100), (1976 - 50, 1464-100)])
     start_new_thread(threaded_client, (conn, currentPlayer%6, currentPlayer//6))
     currentPlayer += 1
