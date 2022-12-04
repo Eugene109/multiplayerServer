@@ -27,40 +27,39 @@ def read_pos(str):
 def make_pos(tup):
     return str(tup[0]) + "," + str(tup[1])
 
-pos = [(50,75), (50,100), (50,125), (25,125), (25,100), (1976 - 50,1464 - 100)]
+pos = []
 
-def threaded_client(conn, player_num):
+def threaded_client(conn, player_num, game_num):
     copVsPrisoner = 0
     if player_num == 5:
         copVsPrisoner = 1
     print(player_num)
-    conn.send(str.encode(make_pos(pos[player_num]) + "," + str(player_num)))
-    print(pos[player_num])
+    conn.send(str.encode(make_pos(pos[game_num][player_num]) + "," + str(player_num)))
+    print(pos[game_num][player_num])
     reply = ""
     while True:
-        # try:
-        data = conn.recv(2048).decode()
-        pos[player_num] = read_pos(data)
+        try:
+            data = conn.recv(2048).decode()
+            if not data:
+                print("Disconnected")
+                break
+            else:
+                pos[game_num][player_num] = read_pos(data)
 
-        print(pos[player_num])
-        if not data:
-            print("Disconnected")
+                # print(pos[game_num][player_num])
+                reply = ""
+                for a in range(0,len(pos[game_num])):
+                    if reply == "":
+                        reply = make_pos(pos[game_num][a])
+                    else:
+                        reply = reply + "|" + make_pos(pos[game_num][a])
+
+                # print("Received: " + data)
+                # print("Sending : " + reply)
+
+            conn.sendall(str.encode(reply))
+        except:
             break
-        else:
-            # reply = make_pos(pos[player_num-1])
-            reply = ""
-            for a in range(0,len(pos)):
-                if reply == "":
-                    reply = make_pos(pos[a])
-                else:
-                    reply = reply + "|" + make_pos(pos[a])
-
-            # print("Received: " + data)
-            # print("Sending : " + reply)
-
-        conn.sendall(str.encode(reply))
-        # except:
-            # break
 
     print("Lost connection")
     conn.close()
@@ -70,5 +69,7 @@ while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
+    if currentPlayer % 6 == 0:
+        pos.append([(50,75), (50,100), (50,125), (25,125), (25,100), (1976 - 50,1464 - 100)])
+    start_new_thread(threaded_client, (conn, currentPlayer%6, currentPlayer//6))
     currentPlayer += 1

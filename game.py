@@ -20,7 +20,8 @@ class Network:
             self.client.connect(self.addr)
             return self.client.recv(2048).decode()
         except: 
-            print ('Something Went Wrong')
+            print ('Cannot connect to server')
+            exit()
             pass
 
     def send(self, data):
@@ -195,6 +196,10 @@ def main():
     clock = pygame.time.Clock()
     n = Network()
     player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5))
+    global cameraShiftx
+    global cameraShifty
+    cameraShiftx = -250 + player.x
+    cameraShifty = -250 + player.y
     playerIndex = parse_args(n.startArgs)[2]
     otherPlayers = [Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0),]
     running = True
