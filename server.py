@@ -2,7 +2,8 @@ import socket
 from _thread import *
 import sys
 
-server = "192.168.1.160"
+# server = "192.168.1.160"
+server = "192.168.1.251"
 
 # server = "127.0.1.1"
 
@@ -60,8 +61,8 @@ def threaded_client(conn, player_num):
                     else:
                         reply = reply + "|" + make_pos(pos[a+1])
 
-            print("Received: " + data)
-            print("Sending : " + reply)
+            # print("Received: " + data)
+            # print("Sending : " + reply)
 
         conn.sendall(str.encode(reply))
         # except:

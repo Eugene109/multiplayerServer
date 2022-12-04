@@ -180,7 +180,7 @@ def main():
     while running:
         clock.tick(30)
         # n.send("hi")
-        n.send(make_pos((player.x, player.y)))
+        playerPositionsString = n.send(make_pos((player.x, player.y)))
         # print(n.connect())
 
         for event in pygame.event.get():
