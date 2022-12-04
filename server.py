@@ -27,7 +27,7 @@ def read_pos(str):
 def make_pos(tup):
     return str(tup[0]) + "," + str(tup[1])
 
-pos = [(50,75), (50,100), (50,125), (25,75), (25,100), (1976 - 50,1464 - 100)]
+pos = [(50,75), (50,100), (50,125), (25,125), (25,100), (1976 - 50,1464 - 100)]
 
 def threaded_client(conn, player_num):
     copVsPrisoner = 0

@@ -65,12 +65,8 @@ class Background():
 
 class Player():
     def __init__(self, x, y, IsCopOrPrisoner): # False = prisoner true = cop
-        global cameraShiftx
-        global cameraShifty
         self.x = x
         self.y = y
-        cameraShiftx = -self.x
-        cameraShifty = -self.y
         self.rect = (x,y,width,height)
         self.color = (0,255,255)
         self.currentImageIndex = 0;
@@ -194,7 +190,7 @@ def main():
         playerPositionsStringsSeparated = playerPositionsString.split('|')
         for a in range(0, len(playerPositions)):
             playerPositions[a] = read_pos(playerPositionsStringsSeparated[a])
-            if a != playerIndex:
+            if not a == playerIndex:
                 otherPlayers[a].x = playerPositions[a][0]
                 otherPlayers[a].y = playerPositions[a][1]
 
