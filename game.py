@@ -197,8 +197,8 @@ class Prisoner():
 class GotCaughtScreen():
     def __init__(self):
         self.image = pygame.transform.scale(pygame.image.load('endGameScreen.png'), (245, 147))
-        self.x = 250 - 245//2
-        self.y = 250 - 147//2
+        self.x = 125
+        self.y = 175
     def draw(self, win):
         win.blit(self.image, self.x, self.y)
 
@@ -268,7 +268,7 @@ def main():
         player.draw(win)
 
         if caught:
-            # caughtScreen.draw(win)
+            caughtScreen.draw(win)
             pass
 
         pygame.display.update()
