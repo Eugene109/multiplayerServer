@@ -74,9 +74,15 @@ class Player():
         self.rect = (x,y,width,height)
         self.color = (0,255,255)
         self.currentImageIndex = 0;
+        self.is_cop = IsCopOrPrisoner
         self.images = [ pygame.transform.scale(pygame.image.load('costume1.png'), (20,40)),
                         pygame.transform.scale(pygame.image.load('costume2.png'), (20,40)),
                         pygame.transform.scale(pygame.image.load('costume3.png'), (20,40))]
+        if self.is_cop:
+            self.images = [ pygame.transform.scale(pygame.image.load('copCostume1.png'), (20,40)),
+                            pygame.transform.scale(pygame.image.load('copCostume2.png'), (20,40)),
+                            pygame.transform.scale(pygame.image.load('copCostume3.png'), (20,40))]
+            
         
         self.vel = 5
         self.tick = 0
@@ -141,16 +147,22 @@ class Player():
         self.tick += 1
 
 
-class OtherPlayer():
+class Prisoner():
     def __init__(self, x, y, IsCopOrPrisoner):
         self.x = x
         self.y = y
         self.rect = (x,y,width,height)
         self.color = (0,255,255)
         self.currentImageIndex = 0;
+        self.is_cop = IsCopOrPrisoner
         self.images = [ pygame.transform.scale(pygame.image.load('costume1.png'), (20,40)),
                         pygame.transform.scale(pygame.image.load('costume2.png'), (20,40)),
                         pygame.transform.scale(pygame.image.load('costume3.png'), (20,40))]
+        if self.is_cop:
+            self.images = [ pygame.transform.scale(pygame.image.load('copCostume1.png'), (20,40)),
+                            pygame.transform.scale(pygame.image.load('copCostume2.png'), (20,40)),
+                            pygame.transform.scale(pygame.image.load('copCostume3.png'), (20,40))]
+            
         self.tick = 0
         self.prevX = x
         self.prevY = y
@@ -184,7 +196,7 @@ def main():
     n = Network()
     player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5))
     playerIndex = parse_args(n.startArgs)[2]
-    otherPlayers = [OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0), OtherPlayer(0,0,0),]
+    otherPlayers = [Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,0),]
     running = True
     bg = Background()
     while running:
