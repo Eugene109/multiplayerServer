@@ -58,7 +58,7 @@ def threaded_client(conn, player_num):
                     if reply == "":
                         reply = make_pos(pos[a+1])
                     else:
-                    reply = reply + "," + make_pos(pos[a+1])
+                        reply = reply + "," + make_pos(pos[a+1])
 
             print("Received: " + data)
             print("Sending : " + reply)
