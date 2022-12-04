@@ -2,8 +2,8 @@ import socket
 from _thread import *
 import sys
 
-# server = "192.168.1.160"
 server = "192.168.1.160"
+# server = "192.168.1.160"
 
 # server = "127.0.1.1"
 
@@ -29,13 +29,22 @@ def make_pos(tup):
 
 pos = []
 
+
+currentPlayer = 0
+import time
+
 def threaded_client(conn, player_num, game_num):
+    global currentPlayer
     copVsPrisoner = 0
     if player_num == 2 or player_num == 5:
         copVsPrisoner = 1
     print(player_num)
     conn.send(str.encode(make_pos(pos[game_num][player_num]) + "," + str(player_num)))
     print(pos[game_num][player_num])
+    while currentPlayer < 3:
+        time.sleep(0.5)
+    conn.send(str.encode("Game Start"))
+
     reply = ""
     while True:
         try:
@@ -64,7 +73,6 @@ def threaded_client(conn, player_num, game_num):
     print("Lost connection")
     conn.close()
 
-currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)

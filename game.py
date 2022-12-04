@@ -31,6 +31,13 @@ class Network:
         except socket.error as e:
             print(e)
 
+    def recieve(self):
+        try:
+            return self.client.recv(2048).decode()
+        except:
+            print ('Cannot connect to server')
+            exit()
+
 def read_pos(str):
     str = str.split(",")
     return int(str[0]), int(str[1])
@@ -46,9 +53,6 @@ import pygame
 width = 500
 height = 500
 
-pygame.init()
-win = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Prison Maze")
 
 clientNumber = 0
 
@@ -64,6 +68,8 @@ class Background():
         global cameraShifty
         # win.blit(self.image, (-cameraShiftx, -cameraShifty))
         win.blit(self.image, (-cameraShiftx, -cameraShifty))
+
+caught = False
 
 class Player():
     def __init__(self, x, y, IsCopOrPrisoner): # False = prisoner true = cop
@@ -120,7 +126,7 @@ class Player():
         global cameraShiftx
         global cameraShifty
         #check value at corners
-        if win.get_at(((self.x - cameraShiftx) + diffx,(self.y - cameraShifty))).hsva[2] > 2:
+        if win.get_at(((self.x - cameraShiftx) + diffx,(self.y - cameraShifty))).hsva[2] > 2: # 2/255
             diffx = 0
         if win.get_at(((self.x - cameraShiftx)+20 + diffx,(self.y - cameraShifty))).hsva[2] > 2:
             diffx = 0
@@ -147,6 +153,14 @@ class Player():
             self.currentImageIndex = 1 + ((self.tick // 3) % 2)
 
         self.tick += 1
+
+    def check_cop_collision(self, CopPositions):
+        global caught
+        for a in range (0, 2):
+            if CopPositions[a][0] - self.x > -10 and CopPositions[a][0] - self.x < 30:
+                caught = True
+            if CopPositions[a][1] - self.y > -20 and CopPositions[a][1] - self.y < 60:
+                caught = True
 
 
 class Prisoner():
@@ -182,7 +196,13 @@ class Prisoner():
         self.prevY = self.y
 
 
-
+class GotCaughtScreen():
+    def __init__(self):
+        self.image = pygame.transform.scale(pygame.image.load('endGameScreen.png'), (245, 147))
+        self.x = 250 - 245//2
+        self.y = 250 - 147//2
+    def draw(self, win):
+        win.blit(self.image, self.x, self.y)
 
 
 def read_pos(str):
@@ -193,19 +213,23 @@ def parse_args(str):
     return int(str[0]), int(str[1]), int(str[2])
 
 def main():
+    pygame.init()
+    win = pygame.display.set_mode((width, height))
+    pygame.display.set_caption("Prison Maze")
     playerPositions = [(0,0), (0,0),(0,0), (0,0), (0,0), (0,0),]
     clock = pygame.time.Clock()
-    n = Network()
-    player = Player(parse_args(n.startArgs)[0], parse_args(n.startArgs)[1], bool(parse_args(n.startArgs)[2] == 5 or parse_args(n.startArgs)[2] == 2))
+    global net
+    player = Player(parse_args(net.startArgs)[0], parse_args(net.startArgs)[1], bool(parse_args(net.startArgs)[2] == 5 or parse_args(net.startArgs)[2] == 2))
     global cameraShiftx
     global cameraShifty
     cameraShiftx = -250 + player.x
     cameraShifty = -250 + player.y
-    playerIndex = parse_args(n.startArgs)[2]
+    playerIndex = parse_args(net.startArgs)[2]
     otherPlayers = [Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,1), Prisoner(0,0,0), Prisoner(0,0,0), Prisoner(0,0,1),]
     del otherPlayers [playerIndex]
     running = True
     bg = Background()
+    caughtScreen = GotCaughtScreen()
     while running:
         clock.tick(30)
         # n.send("hi")
@@ -216,7 +240,7 @@ def main():
         bg.draw(win)
         cameraShiftx = idk1
         cameraShifty = idk2
-        playerPositionsString = n.send(make_pos((player.x, player.y)))
+        playerPositionsString = net.send(make_pos((player.x, player.y)))
         playerPositionsStringsSeparated = playerPositionsString.split('|')
         for a in range(0, len(playerPositions) - 1):
             if a < playerIndex:
@@ -228,7 +252,9 @@ def main():
                 otherPlayers[a].x = playerPositions[a+1][0]
                 otherPlayers[a].y = playerPositions[a+1][1]
 
-        print(str(player.x) + ", " + str(player.y))
+
+        if not player.is_cop:
+            player.check_cop_collision([playerPositions[2], playerPositions[5]])
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -242,8 +268,21 @@ def main():
         for a in otherPlayers:
             a.draw(win)
         player.draw(win)
+
+        if caught:
+            caughtScreen.draw(win)
+
         pygame.display.update()
 
+net = Network()
+print("Waiting for at least 3 players ...")
+print("Hint: you can join multiple times from the same computer")
+
+import time
+while True:
+    if net.recieve() != "":
+        break
+    time.sleep(0.5)
 
 main()
 
